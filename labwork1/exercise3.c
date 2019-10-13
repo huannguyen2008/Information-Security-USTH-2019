@@ -1,20 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 int i = 0;
-int findLCM(int n1,int n2){
-        // maximum number between n1 and n2 is stored in minMultiple
-        int minMultiple = (n1>n2) ? n1 : n2;
-        // Always true
-        while(1)
-        {
-                if( minMultiple%n1==0 && minMultiple%n2==0 )
-                {
-                        printf("The LCM of %d and %d is %d.", n1, n2,minMultiple);
-                        break;
-                }
-                ++minMultiple;
-        }
-}
 int *transBinary(int x,int size){
         int *arr = malloc(size);
         i = 0;
@@ -25,7 +11,6 @@ int *transBinary(int x,int size){
         }
         return arr;
 }
-
 int square(int x,int e,int m){
         int finalVal=1;
         int *temp = transBinary(e,100);
@@ -37,16 +22,38 @@ int square(int x,int e,int m){
         }
         for (int j = 0; j < i; j++) {
                 if (temp[j] == 1) {
-                        printf("%d\n",modArr[j] );
                         finalVal = (finalVal * modArr[j]) % m;
                 }
         }
-        printf("final answer is : %d",finalVal % m);
-
+        return finalVal % m;
+}
+int findLCM(int n1,int n2){
+        int minMultiple = (n1>n2) ? n1 : n2;
+        while(1)
+        {
+                if( minMultiple%n1==0 && minMultiple%n2==0 )
+                {break;}
+                ++minMultiple;
+        }
+        return minMultiple;
+}
+int modInverse(int e, int p, int q){
+        int ld = findLCM(p-1,q-1);
+        e = e % ld;
+        for (int d = 1; d < ld; d++)
+                if ((e * d) % ld == 1)
+                        return d;
+}
+int decrypt(int p,int q,int e,int m){
+        int n=q*p;
+        int c = square(m,e,n);
+        int d = modInverse(e,p,q);
+        return square(c,d,n);
 }
 int main() {
-  int n1 = 5;
-  int n2 = 10;
-  findLCM(n1,n2);
-  return 0;
+        int p = 5, q = 11, e = 3, m=9;
+        int n = p*q;
+        printf("encrypt is : %d\n",square(m,e,n));
+        printf("decrypt is : %d\n",decrypt(p,q,e,m) );
+        return 0;
 }
